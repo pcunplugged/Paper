@@ -1,12 +1,7 @@
 local uis = game:GetService("UserInputService")
 local ts = game:GetService("TweenService")
 local rs = game:GetService("RunService")
-
 local httpservice = game:GetService("HttpService")
-
-local mouse = game.Players.LocalPlayer:GetMouse()
-
-local viewport = workspace.CurrentCamera.ViewportSize
 
 local request = http_request or request or (http and http.request) or (syn and syn.request)
 
@@ -736,7 +731,9 @@ function Library:New(name, titleText)
 	if syn then
 		syn.protect_gui(Paper)
 		
-		Paper.Parent = game.CoreGui
+		Paper.Parent = game:GetService("CoreGui")
+	else
+		Paper.Parent = game.Players.LocalPlayer.PlayerGui
 	end
 	
 	libraryInitialized = true --// idk if this works
