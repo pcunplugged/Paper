@@ -5,6 +5,8 @@ local httpservice = game:GetService("HttpService")
 
 local request = http_request or request or (http and http.request) or (syn and syn.request)
 
+warn("Heads up!")
+
 local Library = {}
 
 local libraryInitialized = false
