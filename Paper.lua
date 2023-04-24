@@ -736,9 +736,7 @@ function Library:New(name, titleText)
 	if syn then
 		syn.protect_gui(Paper)
 		
-		Paper.Parent = game:GetService("CoreGui")
-	else
-		Paper.Parent = game.Players.LocalPlayer.PlayerGui
+		Paper.Parent = game.CoreGui
 	end
 	
 	libraryInitialized = true --// idk if this works
