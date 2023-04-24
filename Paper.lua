@@ -2,9 +2,13 @@ local uis = game:GetService("UserInputService")
 local ts = game:GetService("TweenService")
 local rs = game:GetService("RunService")
 
+local httpservice = game:GetService("HttpService")
+
 local mouse = game.Players.LocalPlayer:GetMouse()
 
 local viewport = workspace.CurrentCamera.ViewportSize
+
+local request = http_request or request or (http and http.request) or (syn and syn.request)
 
 local Library = {}
 
@@ -20,6 +24,8 @@ local lastMousePos
 local lastGoalPos
 local DRAG_SPEED = (14); -- // The speed of the UI darg.
 
+local b64decode = (syn and syn.crypt and syn.crypt.base64 and syn.crypt.base64.decode) or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/GameAnalytics/GA-SDK-ROBLOX/master/GameAnalyticsSDK/GameAnalytics/HttpApi/HashLib/Base64.lua")).Decode
+
 function clickEffect(component)
 	ts:Create(component, TweenInfo.new(.05, Enum.EasingStyle.Back), { BackgroundColor3 = Color3.fromRGB(40,40,43) }):Play()
 	task.wait(.05)
@@ -31,7 +37,6 @@ local gui = nil
 local function Lerp(a, b, m)
 	return a + (b - a) * m
 end;
-
 
 local function Update(dt)
 	if not (startPos) then return end;
@@ -48,6 +53,42 @@ local function Update(dt)
 end;
 
 function Library:New(name, titleText)
+
+	if not isfolder("PaperContent") then
+		makefolder("PaperContent")
+		makefolder("PaperContent\\cfg")
+
+		repotree = game:HttpGetAsync("https://api.github.com/repos/pcunplugged/Paper/git/trees/09b1f4324c1544c042bca5bff027b241aa855897?recursive=1")
+		local filelist = {}
+		repotree = httpservice:JSONDecode(repotree).tree
+
+		for i,v in next, repotree do
+			filelist[#filelist + 1] = {
+				path = v.path,
+				type = (v.type == "tree" and "folder") or (v.type == "blob" and "file"),
+				url = v.url
+			}
+		end
+		
+		for i,v in next, filelist do
+			if v.type == "folder" then
+				print("Creating folder: " .. v.path)
+				makefolder("PaperContent\\" .. v.path)
+			end
+
+			if v.type == "file" then
+				print("Writing file: " .. v.path)
+				coroutine.wrap(function()
+					writefile("PaperContent\\" .. v.path, b64decode(
+						httpservice:JSONDecode(
+							game:HttpGetAsync(v.url)
+						).content:gsub("\n", "")
+					))
+				end)()
+			end
+		end
+	end
+
 	local Paper = Instance.new("ScreenGui")
 	
 	local main = Instance.new("Frame")
