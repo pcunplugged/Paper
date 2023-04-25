@@ -5,8 +5,6 @@ local httpservice = game:GetService("HttpService")
 
 local request = http_request or request or (http and http.request) or (syn and syn.request)
 
-warn("Heads up!")
-
 local Library = {}
 
 local libraryInitialized = false
@@ -30,6 +28,7 @@ function clickEffect(component)
 end
 
 local gui = nil
+local mainUI = nil
 
 local function Lerp(a, b, m)
 	return a + (b - a) * m
@@ -101,6 +100,7 @@ function Library:New(name, titleText)
 	local notificationHolderPadding = Instance.new("UIPadding")
 	
 	Paper.Name = name
+	mainUI = Paper
 
 	main.Name = "main"
 	main.Parent = Paper
@@ -743,7 +743,7 @@ function Library:New(name, titleText)
 	return Tab
 end
 
-function Library:Notify(title, text, limit, soundID)
+function Library:Notify(title, text, limit, soundfile)
 	if not libraryInitialized or notifHolder == nil then warn("Paper isn't initialized! Notifications can't be used until you have a main ui!") return end
 	
 	local notification = Instance.new("Frame")
@@ -763,8 +763,11 @@ function Library:Notify(title, text, limit, soundID)
 	
 	limit = limit or 5
 	
-	soundID = getsynasset(soundID) or ""
-
+	if syn then
+		soundfile = getsynasset(soundfile) or ""
+	else
+		soundfile = ""
+	end
 
 	
 	notification.Name = "notification"
@@ -864,6 +867,16 @@ function Library:Notify(title, text, limit, soundID)
 	task.wait(limit)
 	
 	notification:Destroy()
+end
+
+function Library:Destroy()
+	if not libraryInitialized or not gui then warn("Paper was never initialized! Nothing to remove!") return end
+
+	Paper:Notify("Paper", "Cheat is being destroyed!", 2, readfile("PaperContent//sound//notif1.ogg"))
+
+	task.wait(2)
+
+	mainUI:Destroy()
 end
 
 return Library
