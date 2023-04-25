@@ -1,6 +1,7 @@
 local uis = game:GetService("UserInputService")
 local ts = game:GetService("TweenService")
 local rs = game:GetService("RunService")
+local vu = game:GetService("VirtualUser")
 local httpservice = game:GetService("HttpService")
 
 local request = http_request or request or (http and http.request) or (syn and syn.request)
@@ -54,9 +55,127 @@ local function Update(dt)
 	gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
 end;
 
+local function DownloadContent() --// does the same thing as the check in the new function
+	makefolder("PaperContent")
+	makefolder("PaperContent\\cfg")
+
+	repotree = game:HttpGetAsync("https://api.github.com/repos/pcunplugged/Paper/git/trees/09b1f4324c1544c042bca5bff027b241aa855897?recursive=1")
+	local filelist = {}
+	repotree = httpservice:JSONDecode(repotree).tree
+
+	for i,v in next, repotree do
+		filelist[#filelist + 1] = {
+			path = v.path,
+			type = (v.type == "tree" and "folder") or (v.type == "blob" and "file"),
+			url = v.url
+		}
+	end
+	
+	for i,v in next, filelist do
+		if v.type == "folder" then
+			print("Creating folder: " .. v.path)
+			makefolder("PaperContent\\" .. v.path)
+		end
+
+		if v.type == "file" then
+			print("Writing file: " .. v.path)
+			coroutine.wrap(function()
+				writefile("PaperContent\\" .. v.path, b64decode(
+					httpservice:JSONDecode(
+						game:HttpGetAsync(v.url)
+					).content:gsub("\n", "")
+				))
+			end)()
+		end
+	end
+end
+
+local players = game.Players
+local plr = players.LocalPlayer
+
 function Library:New(name, titleText)
 
-	if not isfolder("PaperContent") then
+	local Paper = Instance.new("ScreenGui")
+
+	local loadingFrame = Instance.new("Frame")
+	local loadingFrameOutline = Instance.new("Frame")
+	local loadingFrameContainer = Instance.new("Frame")
+	local logo = Instance.new("ImageLabel")
+	local barFrame = Instance.new("Frame")
+	local barFrameOutline = Instance.new("Frame")
+	local bar = Instance.new("Frame")
+	local loadingFrameLabel = Instance.new("TextLabel")
+
+	loadingFrame.Name = "loadingFrame"
+	loadingFrame.Parent = Paper
+	loadingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	loadingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
+	loadingFrame.BorderColor3 = Color3.fromRGB(44, 44, 44)
+	loadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	loadingFrame.Size = UDim2.new(0, 400, 0, 300)
+
+	loadingFrameOutline.Name = "loadingFrameOutline"
+	loadingFrameOutline.Parent = loadingFrame
+	loadingFrameOutline.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
+	loadingFrameOutline.BorderColor3 = Color3.fromRGB(24, 24, 24)
+	loadingFrameOutline.BorderSizePixel = 2
+	loadingFrameOutline.Size = UDim2.new(1, 0, 1, 0)
+	loadingFrameOutline.ZIndex = 0
+
+	loadingFrameContainer.Name = "loadingFrameContainer"
+	loadingFrameContainer.Parent = loadingFrame
+	loadingFrameContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	loadingFrameContainer.BackgroundTransparency = 1.000
+	loadingFrameContainer.ClipsDescendants = true
+	loadingFrameContainer.Size = UDim2.new(1, 0, 1, 0)
+	loadingFrameContainer.ZIndex = 2
+
+	logo.Name = "logo"
+	logo.Parent = loadingFrameContainer
+	logo.AnchorPoint = Vector2.new(0.5, 0.5)
+	logo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	logo.BackgroundTransparency = 1.000
+	logo.Position = UDim2.new(0.5, 0, 0.5, 0)
+	logo.Size = UDim2.new(0, 0, 0, 0)
+	logo.Image = getasset("PaperContent\\ui\\paper_logo.png") or ""
+
+	barFrame.Name = "barFrame"
+	barFrame.Parent = loadingFrameContainer
+	barFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+	barFrame.BorderColor3 = Color3.fromRGB(44, 44, 44)
+	barFrame.Position = UDim2.new(0, 20, 0, 275)
+	barFrame.Size = UDim2.new(0.899999976, 0, 0.0500000007, 0)
+	barFrame.ZIndex = 2
+
+	barFrameOutline.Name = "barFrameOutline"
+	barFrameOutline.Parent = barFrame
+	barFrameOutline.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+	barFrameOutline.BorderColor3 = Color3.fromRGB(24, 24, 24)
+	barFrameOutline.BorderSizePixel = 2
+	barFrameOutline.Size = UDim2.new(1, 0, 1, 0)
+
+	bar.Name = "bar"
+	bar.Parent = barFrame
+	bar.BackgroundColor3 = Color3.fromRGB(50, 50, 53)
+	bar.BorderSizePixel = 0
+	bar.Size = UDim2.new(0, 0, 1, 0)
+	bar.ZIndex = 3
+
+	loadingFrameLabel.Name = "loadingFrameLabel"
+	loadingFrameLabel.Parent = loadingFrameContainer
+	loadingFrameLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	loadingFrameLabel.BackgroundTransparency = 1.000
+	loadingFrameLabel.Position = UDim2.new(0, 100, 0, 235)
+	loadingFrameLabel.Size = UDim2.new(0, 200, 0, 30)
+	loadingFrameLabel.Font = Enum.Font.Roboto
+	loadingFrameLabel.Text = "Checking content..."
+	loadingFrameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	loadingFrameLabel.TextSize = 18.000
+	loadingFrameLabel.TextStrokeTransparency = 0.000
+
+	ts:Create(logo, TweenInfo.new(1, Enum.EasingStyle.Sine), { Size = UDim2.new(0,200,0,200) }):Play()
+
+	if not isfolder("PaperContent") then --// Create folders and download paper content
 		makefolder("PaperContent")
 		makefolder("PaperContent\\cfg")
 
@@ -70,16 +189,26 @@ function Library:New(name, titleText)
 				type = (v.type == "tree" and "folder") or (v.type == "blob" and "file"),
 				url = v.url
 			}
+
+			loadingFrameLabel.Text = "Content found: " .. filelist[#filelist].path
+			ts:Create(bar, TweenInfo.new(.5, Enum.EasingStyle.Quart), { Size = UDim2.new(.247,0,1,0) }):Play()
 		end
 		
 		for i,v in next, filelist do
 			if v.type == "folder" then
 				print("Creating folder: " .. v.path)
 				makefolder("PaperContent\\" .. v.path)
+
+				loadingFrameLabel.Text = "Creating folder: " .. v.path
+				ts:Create(bar, TweenInfo.new(.5, Enum.EasingStyle.Quart), { Size = UDim2.new(.628,0,1,0) }):Play() --// i dont feel like actually making the bar count for loading
 			end
 
 			if v.type == "file" then
 				print("Writing file: " .. v.path)
+
+				loadingFrameLabel.Text = "Downloading content: " .. v.path
+				ts:Create(bar, TweenInfo.new(.5, Enum.EasingStyle.Quart), { Size = UDim2.new(.82,0,1,0) }):Play()
+
 				coroutine.wrap(function()
 					writefile("PaperContent\\" .. v.path, b64decode(
 						httpservice:JSONDecode(
@@ -89,9 +218,20 @@ function Library:New(name, titleText)
 				end)()
 			end
 		end
+	else
+		loadingFrameLabel.Text = "Downloading content"
+		DownloadContent()
 	end
 
-	local Paper = Instance.new("ScreenGui")
+	ts:Create(bar, TweenInfo.new(.5, Enum.EasingStyle.Quart), { Size = UDim2.new(1,0,1,0) }):Play()
+	loadingFrameLabel.Text = "Initializing"
+
+	task.wait(2)
+	ts:Create(loadingFrame, TweenInfo.new(.5, Enum.EasingStyle.Quad), { Position = UDim2.new(.5,0,2,0) }):Play()
+
+	task.wait(.5)
+	
+	loadingFrame:Destroy()
 	
 	local main = Instance.new("Frame")
 	local mainOutline = Instance.new("Frame")
@@ -745,6 +885,33 @@ function Library:New(name, titleText)
 	end
 	
 	libraryInitialized = true --// idk if this works
+
+	--// built in anti afk!!!!
+
+	if not getgenv().AntiKick then
+		getgenv.AntiKick = {
+			SendNotifications = true,
+			CheckCaller = false
+		}
+
+		OldNamecall = hookmetamethod(ga, "__namecall", function(...)
+			if (getgenv().AntiKick.CheckCaller and not checkcaller() or true) and stringlower(getnamecallmethod()) == "kick" then
+				if getgenv().AntiKick.SendNotifications then
+					paper:Notify("Paper Backend", "Intercepted a client sided kick!", 5, "PaperContent\\sound\\notif1.ogg")
+				end
+			end
+
+			return nil
+
+		end)
+
+		return OldNamecall(...)
+	end
+
+	plr.Idled:Connect(function()
+		vu:CaptureController()
+		vu:ClickButton2(Vector2.new())
+	end)
 	
 	return Tab
 end
