@@ -96,6 +96,7 @@ local plr = players.LocalPlayer
 function Library:New(name, titleText)
 
 	local Paper = Instance.new("ScreenGui")
+	warn("Paper was created!")
 
 	local loadingFrame = Instance.new("Frame")
 	local loadingFrameOutline = Instance.new("Frame")
@@ -230,7 +231,7 @@ function Library:New(name, titleText)
 	ts:Create(loadingFrame, TweenInfo.new(.5, Enum.EasingStyle.Quad), { Position = UDim2.new(.5,0,2,0) }):Play()
 
 	task.wait(.5)
-	
+
 	loadingFrame:Destroy()
 	
 	local main = Instance.new("Frame")
