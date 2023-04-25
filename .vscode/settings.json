@@ -1,0 +1,18 @@
+{
+    "robloxLsp.diagnostics.globals": [
+        "makefolder",
+        "appendfile",
+        "delfile",
+        "delfolder",
+        "readfile",
+        "writefile",
+        "getsynasset",
+        "getcustomasset",
+        "syn",
+        "get_hidden_gui",
+        "http_request",
+        "request",
+        "http",
+        "isfolder"
+    ]
+}
