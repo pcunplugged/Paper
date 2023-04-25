@@ -26,7 +26,11 @@ local makefolder = makefolder
 local append = appendfile
 local deletefile = delfile
 local deletefolder = delfolder
+local readfile = readfile
+local writefile = writefile
 local getasset = getsynasset or getcustomasset
+
+local protectgui = syn.protect_gui or get_hidden_gui
 
 function clickEffect(component)
 	ts:Create(component, TweenInfo.new(.05, Enum.EasingStyle.Back), { BackgroundColor3 = Color3.fromRGB(40,40,43) }):Play()
@@ -97,13 +101,14 @@ function Library:New(name, titleText)
 
 	local Paper = Instance.new("ScreenGui")
 	warn("Paper was created!")
+	
 
-	if syn then
-		syn.protect_gui(Paper)
-		
-		Paper.Parent = game:GetService("CoreGui")
+	if protectgui == get_hidden_gui then
+		Paper.Parent = protectgui
 	else
-		Paper.Parent = game.Players.LocalPlayer.PlayerGui
+		protectgui(Paper)
+
+		Paper.Parent = game.CoreGui
 	end
 
 	local loadingFrame = Instance.new("Frame")
