@@ -98,6 +98,14 @@ function Library:New(name, titleText)
 	local Paper = Instance.new("ScreenGui")
 	warn("Paper was created!")
 
+	if syn then
+		syn.protect_gui(Paper)
+		
+		Paper.Parent = game:GetService("CoreGui")
+	else
+		Paper.Parent = game.Players.LocalPlayer.PlayerGui
+	end
+
 	local loadingFrame = Instance.new("Frame")
 	local loadingFrameOutline = Instance.new("Frame")
 	local loadingFrameContainer = Instance.new("Frame")
@@ -877,19 +885,11 @@ function Library:New(name, titleText)
 		return Section
 	end
 	
-	if syn then
-		syn.protect_gui(Paper)
-		
-		Paper.Parent = game:GetService("CoreGui")
-	else
-		Paper.Parent = game.Players.LocalPlayer.PlayerGui
-	end
-	
 	libraryInitialized = true --// idk if this works
 
 	--// built in anti afk!!!!
 
-	if not getgenv().AntiKick then
+	--[[if not getgenv().AntiKick then
 		getgenv.AntiKick = {
 			SendNotifications = true,
 			CheckCaller = false
@@ -912,7 +912,7 @@ function Library:New(name, titleText)
 	plr.Idled:Connect(function()
 		vu:CaptureController()
 		vu:ClickButton2(Vector2.new())
-	end)
+	end)]]
 	
 	return Tab
 end
