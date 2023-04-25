@@ -743,7 +743,7 @@ function Library:New(name, titleText)
 	return Tab
 end
 
-function Library:Notify(title, text, limit, soundfile)
+function Library:Notify(title, text, limit, soundpath)
 	if not libraryInitialized or notifHolder == nil then warn("Paper isn't initialized! Notifications can't be used until you have a main ui!") return end
 	
 	local notification = Instance.new("Frame")
@@ -762,9 +762,11 @@ function Library:Notify(title, text, limit, soundfile)
 	local sound = Instance.new("Sound")
 	
 	limit = limit or 5
-	
+	local soundfile = nil
+
 	if syn then
-		soundfile = getsynasset(soundfile) or ""
+		soundfile = getsynasset(soundpath) or ""
+
 	else
 		soundfile = ""
 	end
