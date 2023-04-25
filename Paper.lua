@@ -20,7 +20,7 @@ local lastMousePos
 local lastGoalPos
 local DRAG_SPEED = (14); -- // The speed of the UI darg.
 
-local b64decode = (syn and syn.crypt and syn.crypt.base64 and syn.crypt.base64.decode) or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/GameAnalytics/GA-SDK-ROBLOX/master/GameAnalyticsSDK/GameAnalytics/HttpApi/HashLib/Base64.lua")).Decode
+local b64decode = (syn and syn.crypt and syn.crypt.base64 and syn.crypt.base64.decode) or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/GameAnalytics/GA-SDK-ROBLOX/master/gameanalytics-sdk/GameAnalytics/HttpApi/HashLib/Base64.lua")).Decode
 
 local makefolder = makefolder
 local append = appendfile
