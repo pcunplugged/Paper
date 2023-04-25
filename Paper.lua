@@ -872,11 +872,11 @@ end
 function Library:Kill()
 	if not libraryInitialized or not gui then warn("Paper was never initialized! Nothing to remove!") return end
 
-	Paper:Notify("Paper", "Cheat is being destroyed!", 2, readfile("PaperContent//sound//notif1.ogg"))
-
-	task.wait(2)
+	print("Killing Paper!")
 
 	mainUI:Destroy()
+
+	libraryInitialized = false
 end
 
 return Library
