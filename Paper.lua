@@ -237,6 +237,8 @@ function Library:New(name, titleText)
 		DownloadContent()
 	end
 
+	writefile("PaperContent\\cfg\\config.cfg", "{}")
+
 	ts:Create(bar, TweenInfo.new(.5, Enum.EasingStyle.Quart), { Size = UDim2.new(1,0,1,0) }):Play()
 	loadingFrameLabel.Text = "Initializing"
 
