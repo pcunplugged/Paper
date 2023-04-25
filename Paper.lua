@@ -21,6 +21,12 @@ local DRAG_SPEED = (14); -- // The speed of the UI darg.
 
 local b64decode = (syn and syn.crypt and syn.crypt.base64 and syn.crypt.base64.decode) or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/GameAnalytics/GA-SDK-ROBLOX/master/GameAnalyticsSDK/GameAnalytics/HttpApi/HashLib/Base64.lua")).Decode
 
+local makefolder = makefolder
+local append = appendfile
+local deletefile = delfile
+local deletefolder = delfolder
+local getasset = getsynasset or getcustomasset
+
 function clickEffect(component)
 	ts:Create(component, TweenInfo.new(.05, Enum.EasingStyle.Back), { BackgroundColor3 = Color3.fromRGB(40,40,43) }):Play()
 	task.wait(.05)
@@ -764,14 +770,9 @@ function Library:Notify(title, text, limit, soundpath)
 	limit = limit or 5
 	local soundfile = nil
 
-	if syn then
-		soundfile = getsynasset(soundpath) or ""
+	soundfile = getasset(soundpath) or ""
 
-	else
-		soundfile = ""
-	end
 
-	
 	notification.Name = "notification"
 	notification.Parent = notifHolder
 	notification.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
@@ -841,7 +842,7 @@ function Library:Notify(title, text, limit, soundpath)
 	timeLimitFrame.Parent = notificationContainer
 	timeLimitFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
 	timeLimitFrame.Position = UDim2.new(0, 0, 1, 5)
-	timeLimitFrame.Size = UDim2.new(0.929, 0, 0.077, 0)
+	timeLimitFrame.Size = UDim2.new(0.95, 0, 0.077, 0)
 	timeLimitFrame.ZIndex = -1
 
 	timeLimitFrameCorner.Name = "timeLimitFrameCorner"
