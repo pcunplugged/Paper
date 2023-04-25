@@ -869,7 +869,7 @@ function Library:Notify(title, text, limit, soundfile)
 	notification:Destroy()
 end
 
-function Library:Destroy()
+function Library:Kill()
 	if not libraryInitialized or not gui then warn("Paper was never initialized! Nothing to remove!") return end
 
 	Paper:Notify("Paper", "Cheat is being destroyed!", 2, readfile("PaperContent//sound//notif1.ogg"))
