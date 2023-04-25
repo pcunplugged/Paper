@@ -857,7 +857,7 @@ function Library:Notify(title, text, limit, soundpath)
 	timeLimitCorner.Parent = timeLimit
 	
 	sound.Volume = 1
-	sound.SoundId = soundID
+	sound.SoundId = soundfile
 	sound.Parent = timeLimit
 	
 	sound.PlayOnRemove = true
